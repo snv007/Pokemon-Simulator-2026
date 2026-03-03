@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pokemon Classic Campaign</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <main class="game-shell">
+    <header class="top-hud panel">
+      <h1>Pokemon Classic Campaign</h1>
+      <p>Journey mode with region travel, wild exploration, trainers, gyms, and tournament.</p>
+      <div class="row-actions">
+        <div id="statusText" class="badge">Booting game engine...</div>
+        <div id="tutorialContextLabel" class="badge">Tutorial: Start Screen</div>
+        <button id="openTutorialBtn" class="btn ghost">How To Play</button>
+      </div>
+    </header>
+
+    <section id="screenStart" class="screen panel">
+      <h2>New Trainer</h2>
+      <p>Create your trainer profile.</p>
+      <label for="trainerNameInput">Trainer Name</label>
+      <input id="trainerNameInput" maxlength="20" placeholder="e.g. Red" />
+
+      <div>
+        <h3>Choose Avatar</h3>
+        <div id="avatarChoices" class="avatar-grid"></div>
+      </div>
+
+      <div class="row-actions">
+        <button id="beginJourneyBtn" class="btn primary">Begin Journey</button>
+        <button id="continueBtn" class="btn ghost">Continue Saved Game</button>
+      </div>
+    </section>
+
+    <section id="screenStarter" class="screen panel hidden">
+      <h2>Choose Your Starter</h2>
+      <p>Starter begins with 50 HP and level 5.</p>
+      <div id="starterGrid" class="starter-grid"></div>
+    </section>
+
+    <section id="screenHub" class="screen panel hidden">
+      <div class="hub-grid">
+        <article class="panel subpanel">
+          <h3>Trainer Passport</h3>
+          <div id="trainerSummary"></div>
+        </article>
+
+        <article class="panel subpanel">
+          <h3>Party</h3>
+          <div id="activePokemonCard" class="active-card"></div>
+          <div id="teamList" class="team-list"></div>
+        </article>
+
+        <article class="panel subpanel">
+          <h3>Region Map</h3>
+          <div id="regionMap" class="region-map"></div>
+          <div id="townMap" class="region-map"></div>
+          <div id="mapHint" class="region-info"></div>
+        </article>
+
+        <article class="panel subpanel">
+          <h3>Journey Control</h3>
+          <div id="currentRegionInfo" class="region-info"></div>
+          <div id="wildPoolPreview" class="wild-preview"></div>
+          <div class="encounter-controls">
+            <label for="wildZoneSelect">Choose Wild Zone</label>
+            <select id="wildZoneSelect"></select>
+            <label for="wildSelect">Choose Wild Pokemon</label>
+            <select id="wildSelect"></select>
+            <button id="startChosenWildBtn" class="btn">Encounter Selected Wild</button>
+            <label for="trainerSelect">Choose Wild Trainer</label>
+            <select id="trainerSelect"></select>
+            <button id="startChosenTrainerBtn" class="btn">Challenge Selected Trainer</button>
+          </div>
+          <div class="action-grid">
+            <button id="enterWildBtn" class="btn">Enter Wild</button>
+            <button id="openWildMapBtn" class="btn">Open Wild Map</button>
+            <button id="searchWildBtn" class="btn">Search Encounter</button>
+            <button id="leaveWildBtn" class="btn ghost">Exit Wild</button>
+            <button id="centerBtn" class="btn">Pokemon Center</button>
+            <button id="shopBtn" class="btn">PokeMart</button>
+            <button id="inventoryBtn" class="btn">Inventory</button>
+            <button id="gymBtn" class="btn">Gym Battle</button>
+            <button id="tournamentBtn" class="btn primary">Tournament</button>
+            <button id="saveBtn" class="btn ghost">Save Game</button>
+          </div>
+          <div id="guideText" class="region-info"></div>
+          <div id="nextObjective" class="objective"></div>
+        </article>
+      </div>
+
+      <article class="panel subpanel log-wrap">
+        <h3>Adventure Log</h3>
+        <div id="logBox" class="log-box"></div>
+      </article>
+    </section>
+  </main>
+
+  <section id="battleModal" class="modal hidden">
+    <div class="modal-card panel">
+      <div class="battle-head">
+        <h2 id="battleTitle">Battle</h2>
+        <button id="runAwayBtn" class="btn ghost">Run</button>
+      </div>
+
+      <div class="battlefield">
+        <article class="combat-card" id="enemyCard">
+          <div id="enemyLabel"></div>
+          <img id="enemySprite" class="sprite" alt="Enemy" />
+          <div id="enemyTypes" class="types"></div>
+          <div class="hp-line">
+            <div class="hp-track"><div id="enemyHpBar" class="hp-bar enemy"></div></div>
+            <span id="enemyHpText"></span>
+          </div>
+        </article>
+
+        <article class="combat-card" id="playerCard">
+          <div id="playerLabel"></div>
+          <img id="playerSprite" class="sprite" alt="Player" />
+          <div id="playerTypes" class="types"></div>
+          <div class="hp-line">
+            <div class="hp-track"><div id="playerHpBar" class="hp-bar"></div></div>
+            <span id="playerHpText"></span>
+          </div>
+        </article>
+      </div>
+
+      <div class="battle-actions">
+        <button class="btn action-btn" data-action="move0">Move 1</button>
+        <button class="btn action-btn" data-action="move1">Move 2</button>
+        <button class="btn action-btn" data-action="move2">Move 3</button>
+        <button class="btn action-btn" data-action="move3">Move 4</button>
+        <button class="btn action-btn" data-action="switch">Switch Pokemon</button>
+        <button class="btn action-btn" data-action="potion">Use Potion</button>
+        <button class="btn action-btn" data-action="guard">Guard</button>
+        <button class="btn action-btn" data-action="pokeball">Throw Pokeball</button>
+      </div>
+
+      <div id="moveInfoBox" class="move-info"></div>
+      <div id="battleLog" class="battle-log"></div>
+    </div>
+  </section>
+
+  <section id="shopModal" class="modal hidden">
+    <div class="modal-card panel shop">
+      <div class="battle-head">
+        <h2>PokeMart</h2>
+        <button id="closeShopBtn" class="btn ghost">Close</button>
+      </div>
+      <div id="shopSummary" class="shop-summary"></div>
+      <div class="shop-grid">
+        <button class="btn" data-item="pokeball">Buy Pokeball (200)</button>
+        <button class="btn" data-item="potion">Buy Potion (300)</button>
+        <button class="btn" data-item="superPotion">Buy Super Potion (700)</button>
+        <button class="btn" data-item="thunderStone">Buy Thunder Stone (1400)</button>
+        <button class="btn" data-item="fireStone">Buy Fire Stone (1400)</button>
+        <button class="btn" data-item="waterStone">Buy Water Stone (1400)</button>
+        <button class="btn" data-item="leafStone">Buy Leaf Stone (1400)</button>
+        <button class="btn" data-item="moonStone">Buy Moon Stone (1800)</button>
+        <button class="btn" data-item="revive">Buy Revive (900)</button>
+        <button class="btn" data-item="fullRevive">Buy Full Revive (1800)</button>
+        <button class="btn" data-item="expCandy">Buy EXP Candy (650)</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="centerModal" class="modal hidden">
+    <div class="modal-card panel shop">
+      <div class="battle-head">
+        <h2>Pokemon Center</h2>
+        <button id="closeCenterBtn" class="btn ghost">Close</button>
+      </div>
+      <div id="centerSummary" class="shop-summary"></div>
+      <div id="centerActionLog" class="shop-summary"></div>
+      <div class="shop-grid">
+        <button id="quickHealBtn" class="btn">Quick Heal (120)</button>
+        <button id="fullHealBtn" class="btn">Full Restore (260)</button>
+      </div>
+      <h3>Party To PC Transfer</h3>
+      <div id="partyTransferList" class="pc-list"></div>
+      <h3>PC Storage</h3>
+      <div id="pcStorageList" class="pc-list"></div>
+      <h3>Evolution Desk</h3>
+      <div id="evolutionList" class="pc-list"></div>
+    </div>
+  </section>
+
+  <section id="inventoryModal" class="modal hidden">
+    <div class="modal-card panel shop">
+      <div class="battle-head">
+        <h2>Inventory Desk</h2>
+        <button id="closeInventoryBtn" class="btn ghost">Close</button>
+      </div>
+      <div id="inventorySummary" class="shop-summary"></div>
+      <div class="inventory-grid">
+        <div>
+          <h3>Items</h3>
+          <div id="inventoryItems" class="pc-list"></div>
+        </div>
+        <div>
+          <h3>Pokemon Targets</h3>
+          <div id="inventoryTargets" class="pc-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="teamPickerModal" class="modal hidden">
+    <div class="modal-card panel shop">
+      <div class="battle-head">
+        <h2 id="teamPickerTitle">Choose Pokemon</h2>
+        <button id="closeTeamPickerBtn" class="btn ghost">Close</button>
+      </div>
+      <div id="teamPickerList" class="team-picker-list"></div>
+    </div>
+  </section>
+
+  <section id="wildMapModal" class="modal hidden">
+    <div class="modal-card panel shop">
+      <div class="battle-head">
+        <h2>Wild Map</h2>
+        <button id="closeWildMapBtn" class="btn ghost">Close</button>
+      </div>
+      <div id="wildMapSummary" class="shop-summary"></div>
+      <div id="wildMapZones" class="wild-zones"></div>
+    </div>
+  </section>
+
+  <section id="battleResultModal" class="modal hidden">
+    <div class="modal-card panel shop">
+      <div class="battle-head">
+        <h2 id="resultTitle">Battle Result</h2>
+        <button id="closeResultBtn" class="btn ghost">Close</button>
+      </div>
+      <div id="resultSummary" class="shop-summary"></div>
+      <div id="resultDetails" class="log-box"></div>
+      <div class="row-actions">
+        <button id="evolveBtn" class="btn primary">Evolve Active Pokemon</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="tutorialModal" class="modal hidden">
+    <div class="modal-card panel shop">
+      <div class="battle-head">
+        <h2 id="tutorialTitle">How To Play</h2>
+        <button id="closeTutorialBtn" class="btn ghost">Close</button>
+      </div>
+      <label for="tutorialTopicSelect">Guide Section</label>
+      <select id="tutorialTopicSelect"></select>
+      <div id="tutorialContent" class="log-box"></div>
+    </div>
+  </section>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
